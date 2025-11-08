@@ -6,3 +6,5 @@ librosa
 sounddevice
 wavio
 python-dotenv
+keras
+tensorflow
