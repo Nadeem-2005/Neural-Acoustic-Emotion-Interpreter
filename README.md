@@ -54,38 +54,7 @@ source venv/bin/activate
 ### Step 4: Install Required Dependencies
 
 ```bash
-pip install streamlit
-pip install numpy
-pip install librosa
-pip install torch
-pip install sounddevice
-pip install wavio
-pip install transformers
-```
-
-Alternatively, if a requirements.txt file is provided:
-
-```bash
 pip install -r requirements.txt
-```
-
-### Step 5: Install Additional System Dependencies
-
-For audio processing, you may need to install system-level dependencies:
-
-On Ubuntu/Debian:
-
-```bash
-sudo apt-get update
-sudo apt-get install libsndfile1
-sudo apt-get install portaudio19-dev
-```
-
-On macOS:
-
-```bash
-brew install libsndfile
-brew install portaudio
 ```
 
 ## Usage
