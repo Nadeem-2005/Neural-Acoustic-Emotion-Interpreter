@@ -1,10 +1,10 @@
-# Speech Emotion Recognition with Whisper-Large-V3
+# Speech Emotion Recognition with CNN
 
-A Streamlit-based web application for real-time speech emotion recognition using the Whisper-Large-V3 model fine-tuned for emotion detection. The application supports both audio file uploads and live microphone recording.
+A Streamlit-based web application for real-time speech emotion recognition fine-tuned for emotion detection. The application supports both audio file uploads and live microphone recording.
 
 ## Overview
 
-This application uses a pre-trained Hugging Face model to classify emotions in speech audio. It can detect eight different emotions: angry, calm, disgust, fear, happy, neutral, sad, and surprise.
+This application uses a machine learning model to classify emotions in speech audio. It can detect eight different emotions: angry, calm, disgust, fear, happy, neutral, sad, and surprise.
 
 ## Features
 
@@ -18,7 +18,7 @@ This application uses a pre-trained Hugging Face model to classify emotions in s
 ## Prerequisites
 
 - Python 3.8 or higher
-- pip package manager
+- pip package manager or Conda
 - Microphone access (for recording features)
 - CUDA-compatible GPU (optional, for faster inference)
 
@@ -131,8 +131,7 @@ The summary section shows:
 
 ## Model Information
 
-- Model ID: `firdhokk/speech-emotion-recognition-with-openai-whisper-large-v3`
-- Base Model: OpenAI Whisper Large V3
+- Algorithm: CNN
 - Task: Audio Classification
 - Emotions Detected: angry, calm, disgust, fear, happy, neutral, sad, surprise
 

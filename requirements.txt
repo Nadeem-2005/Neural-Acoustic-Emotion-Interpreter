@@ -3,3 +3,11 @@ tensorflow
 keras
 numpy
 scikit-learn
+
+streamlit
+numpy
+librosa
+torch
+sounddevice
+wavio
+transformers
