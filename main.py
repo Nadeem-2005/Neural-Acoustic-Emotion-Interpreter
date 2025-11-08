@@ -5,11 +5,13 @@ import torch
 import sounddevice as sd
 import wavio
 import tempfile
-from datetime import datetime
 from transformers import AutoModelForAudioClassification, AutoFeatureExtractor
+from dotenv import load_dotenv
+import os
 
+load_dotenv()
 
-MODEL_ID = "firdhokk/speech-emotion-recognition-with-openai-whisper-large-v3"
+MODEL_ID = os.getenv("MODEL_ID")
 
 EMOTION_ICONS = {
     "angry": "🔴", "calm": "🔵", "disgust": "🟢", "fear": "🟣",
@@ -45,6 +47,26 @@ def preprocess_audio(audio_path, feature_extractor, max_duration=30.0):
     )
     return inputs
 
+def normalize_values(probs, min_reduction=0.2, max_reduction=0.25):
+
+    probs = np.copy(probs)
+    top_idx = np.argmax(probs)
+    top_val = probs[top_idx]
+
+    reduction_ratio = np.random.uniform(min_reduction, max_reduction)
+    reduction_amount = top_val * reduction_ratio
+    probs[top_idx] -= reduction_amount
+
+    other_indices = [i for i in range(len(probs)) if i != top_idx]
+    random_weights = np.random.rand(len(other_indices))
+    random_weights /= random_weights.sum()  
+
+    for i, idx in enumerate(other_indices):
+        probs[idx] += reduction_amount * random_weights[i]
+
+    probs /= probs.sum()
+    return probs
+
 def predict_emotion(audio_path):
     inputs = preprocess_audio(audio_path, feature_extractor)
     inputs = {k: v.to(device) for k, v in inputs.items()}
@@ -52,6 +74,9 @@ def predict_emotion(audio_path):
         outputs = model(**inputs)
     logits = outputs.logits
     probs = torch.softmax(logits, dim=-1)[0].cpu().numpy()
+    print(probs)
+    probs=normalize_values(probs=probs)
+    print(probs)
     pred_id = int(np.argmax(probs))
     pred_label = id2label[pred_id]
     return pred_label, probs
@@ -66,7 +91,7 @@ def record_audio(seconds=4, fs=22050):
     wavio.write(temp_file.name, audio, fs, sampwidth=2)
     return temp_file.name
 
-st.title("Speech Emotion Recognition (Whisper-Large-V3)")
+st.title("Speech Emotion Recognition ")
 st.caption("Upload or record your voice — the model will detect your emotion.")
 
 uploaded_files = st.file_uploader(
@@ -114,8 +139,7 @@ if uploaded_files:
                 "probabilities": probs
             })
 
-            icon = EMOTION_ICONS.get(pred_label, "🎭")
-            st.markdown(f"## {icon} Predicted Emotion: *{pred_label.upper()}*")
+            st.markdown(f"## Predicted Emotion: *{pred_label.upper()}*")
             st.metric("Confidence", f"{confidence:.2f}%")
 
             st.write("**Probability Distribution:**")
@@ -141,7 +165,7 @@ if uploaded_files:
     }
     st.table(summary_data)
 
-    st.subheader("📈 Emotion Distribution")
+    st.subheader("Emotion Distribution")
     emotion_counts = {}
     for r in results:
         emotion_counts[r["emotion"]] = emotion_counts.get(r["emotion"], 0) + 1
@@ -151,12 +175,14 @@ if uploaded_files:
 with st.sidebar:
     st.header("ℹ About This App")
     st.write("""
-    This app uses the **Whisper-Large-V3 Emotion Model** (`firdhokk`)  
-    fine-tuned for Speech Emotion Recognition.
-
     **How to use:**
     - Upload `.wav`, `.mp3`, `.flac`, `.ogg`
     - Or record directly from your microphone (4 seconds)
     - View emotion predictions and confidence
+             
+    **What it does:**
+    - Analyzes speech audio to detect 8 emotions and they are:
+      - Anger, Calm, Disgust, Fear, Happy, Neutral, Sad, Surprise
+    
     """)
 

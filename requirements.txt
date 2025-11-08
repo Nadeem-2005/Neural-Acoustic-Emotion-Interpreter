@@ -1,5 +1,8 @@
 streamlit
-tensorflow
-keras
 numpy
-scikit-learn
+torch
+transformers
+librosa
+sounddevice
+wavio
+python-dotenv
